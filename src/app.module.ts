@@ -6,11 +6,13 @@ import { AppService } from './app.service';
 import { ProductsModule } from './products/products.module';
 import { AuthModule } from './auth/auth.module';
 import { ReceiptModule } from './receipt/receipt.module';
+import configuration from './config/configuration';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true, // Makes ConfigModule available everywhere
+      isGlobal: true,
+      load: [configuration],
       envFilePath: '.env',
     }),
     TypeOrmModule.forRootAsync({
@@ -18,13 +20,14 @@ import { ReceiptModule } from './receipt/receipt.module';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: 'mysql',
-        host: configService.get('DB_HOST'),
-        port: configService.get('DB_PORT'),
-        username: configService.get('DB_USERNAME'),
-        password: configService.get('DB_PASSWORD'),
-        database: configService.get('DB_DATABASE'),
+        host: configService.get('database.host'),
+        port: configService.get('database.port'),
+        username: configService.get('database.username'),
+        password: configService.get('database.password'),
+        database: configService.get('database.database'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: true, // Set to false in production
+        synchronize: process.env.NODE_ENV !== 'production',
+        logging: process.env.NODE_ENV !== 'production',
       }),
     }),
     ProductsModule,

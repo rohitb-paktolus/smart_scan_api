@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { ProductsModule } from './products/products.module';
 import { AuthModule } from './auth/auth.module';
 import { ReceiptModule } from './receipt/receipt.module';
+import { UploadModule } from './upload/upload.module';
 import configuration from './config/configuration';
 
 @Module({
@@ -30,9 +31,10 @@ import configuration from './config/configuration';
         logging: process.env.NODE_ENV !== 'production',
       }),
     }),
-    ProductsModule,
-    AuthModule,
-    ReceiptModule,
+  ProductsModule,
+  AuthModule,
+  ReceiptModule,
+  UploadModule,
   ],
   controllers: [AppController],
   providers: [AppService],

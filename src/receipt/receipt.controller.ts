@@ -11,6 +11,8 @@ import {
   UseInterceptors,
   UploadedFile,
   BadRequestException,
+  Res,
+  NotFoundException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ReceiptService } from './receipt.service';
@@ -18,7 +20,8 @@ import { CreateReceiptDto } from './dto/create-receipt.dto';
 import { UpdateReceiptDto } from './dto/update-receipt.dto';
 import { Receipt } from './entities/receipt.entity';
 import { diskStorage } from 'multer';
-import { extname } from 'path';
+import { extname, join } from 'path';
+import { existsSync } from 'fs';
 
 @Controller('receipts')
 export class ReceiptController {
@@ -96,5 +99,21 @@ export class ReceiptController {
   @Get('user/:userId/unsynced')
   async findUnsynced(@Param('userId') userId: string): Promise<Receipt[]> {
     return this.receiptService.findUnsynced(userId);
+  }
+
+  @Get(':id/file')
+  async downloadFile(@Param('id', ParseIntPipe) id: number, @Res() res) {
+    const receipt = await this.receiptService.findOne(id);
+    if (!receipt.filePath) {
+      throw new NotFoundException('No file associated with this receipt');
+    }
+
+    const filePath = join(process.cwd(), receipt.filePath);
+    if (!existsSync(filePath)) {
+      throw new NotFoundException('File not found on disk');
+    }
+
+    // Let Express handle content-type and streaming
+    return res.sendFile(filePath);
   }
 }

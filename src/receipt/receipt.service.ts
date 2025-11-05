@@ -34,10 +34,10 @@ export class ReceiptService {
       if (userId) {
         return await this.receiptRepository.find({
           where: { userId },
-          order: { date: 'DESC' },
+          order: { createdAt: 'DESC' },
         });
       }
-      return await this.receiptRepository.find({ order: { date: 'DESC' } });
+      return await this.receiptRepository.find({ order: { createdAt: 'DESC' } });
     } catch (error) {
       throw new InternalServerErrorException('Failed to fetch receipts');
     }
@@ -102,7 +102,7 @@ export class ReceiptService {
     try {
       return await this.receiptRepository.find({
         where: { userId },
-        order: { date: 'DESC' },
+        order: { createdAt: 'DESC' },
       });
     } catch (error) {
       throw new InternalServerErrorException('Failed to fetch user receipts');
@@ -128,6 +128,7 @@ export class ReceiptService {
     try {
       return await this.receiptRepository.find({
         where: { userId, isSynced: false },
+        order: { createdAt: 'DESC' },
       });
     } catch (error) {
       throw new InternalServerErrorException(

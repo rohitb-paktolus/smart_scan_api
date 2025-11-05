@@ -19,6 +19,10 @@ export class ReceiptService {
   async create(createReceiptDto: CreateReceiptDto): Promise<Receipt> {
     try {
       const receipt = this.receiptRepository.create(createReceiptDto);
+      // Use the provided userId as the creator for auditing
+      if ((createReceiptDto as any).userId) {
+        receipt.createdById = (createReceiptDto as any).userId;
+      }
       return await this.receiptRepository.save(receipt);
     } catch (error) {
       throw new InternalServerErrorException('Failed to create receipt');
@@ -39,7 +43,7 @@ export class ReceiptService {
     }
   }
 
-  async findOne(id: number): Promise<Receipt> {
+  async findOne(id: string): Promise<Receipt> {
     try {
       const receipt = await this.receiptRepository.findOne({ where: { id } });
       if (!receipt) {
@@ -55,11 +59,15 @@ export class ReceiptService {
   }
 
   async update(
-    id: number,
+    id: string,
     updateReceiptDto: UpdateReceiptDto,
   ): Promise<Receipt> {
     try {
       const receipt = await this.findOne(id);
+      // Set updatedById if provided
+      if (updateReceiptDto.updatedById) {
+        receipt.updatedById = updateReceiptDto.updatedById;
+      }
       const updatedReceipt = this.receiptRepository.merge(
         receipt,
         updateReceiptDto,
@@ -73,10 +81,15 @@ export class ReceiptService {
     }
   }
 
-  async remove(id: number): Promise<void> {
+  // Soft-delete: set deletedAt and deletedById so we can track who deleted
+  async remove(id: string, deletedById?: string): Promise<void> {
     try {
       const receipt = await this.findOne(id);
-      await this.receiptRepository.remove(receipt);
+      receipt.deletedAt = new Date();
+      if (deletedById) {
+        receipt.deletedById = deletedById;
+      }
+      await this.receiptRepository.save(receipt);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
@@ -96,7 +109,7 @@ export class ReceiptService {
     }
   }
 
-  async markAsSynced(id: number): Promise<Receipt> {
+  async markAsSynced(id: string): Promise<Receipt> {
     try {
       const receipt = await this.findOne(id);
       receipt.isSynced = true;

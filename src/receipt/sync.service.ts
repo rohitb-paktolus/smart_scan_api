@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ReceiptService } from './receipt.service';
 
 type SyncResult = {
-  receiptId?: number;
+  receiptId?: string;
   action?: 'created' | 'updated' | 'sync';
   status: 'success' | 'failed';
   message?: string;

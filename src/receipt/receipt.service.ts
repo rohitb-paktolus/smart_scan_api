@@ -37,6 +37,7 @@ export class ReceiptService {
           order: { createdAt: 'DESC' },
         });
       }
+    
       return await this.receiptRepository.find({ order: { createdAt: 'DESC' } });
     } catch (error) {
       throw new InternalServerErrorException('Failed to fetch receipts');

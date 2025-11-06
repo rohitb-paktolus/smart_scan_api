@@ -94,7 +94,7 @@ export class AuthService {
     };
   }
 
-  async validateUser(userId: number) {
+  async validateUser(userId: string) {
     return await this.userRepository.findOne({ where: { id: userId } });
   }
 }

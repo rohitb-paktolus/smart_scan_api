@@ -7,7 +7,6 @@ import {
   Put,
   Delete,
   Query,
-  ParseIntPipe,
   UseInterceptors,
   UploadedFile,
   BadRequestException,
@@ -69,21 +68,25 @@ export class ReceiptController {
   }
 
   @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number): Promise<Receipt> {
+  async findOne(@Param('id') id: string): Promise<Receipt> {
     return this.receiptService.findOne(id);
   }
 
   @Put(':id')
   async update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id') id: string,
     @Body() updateReceiptDto: UpdateReceiptDto,
   ): Promise<Receipt> {
+    // updatedById should be provided in the body
     return this.receiptService.update(id, updateReceiptDto);
   }
 
   @Delete(':id')
-  async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.receiptService.remove(id);
+  async remove(
+    @Param('id') id: string,
+    @Query('deletedById') deletedById?: string,
+  ): Promise<void> {
+    return this.receiptService.remove(id, deletedById);
   }
 
   @Get('user/:userId')
@@ -92,7 +95,7 @@ export class ReceiptController {
   }
 
   @Post(':id/sync')
-  async markAsSynced(@Param('id', ParseIntPipe) id: number): Promise<Receipt> {
+  async markAsSynced(@Param('id') id: string): Promise<Receipt> {
     return this.receiptService.markAsSynced(id);
   }
 
@@ -102,7 +105,7 @@ export class ReceiptController {
   }
 
   @Get(':id/file')
-  async downloadFile(@Param('id', ParseIntPipe) id: number, @Res() res) {
+  async downloadFile(@Param('id') id: string, @Res() res) {
     const receipt = await this.receiptService.findOne(id);
     if (!receipt.filePath) {
       throw new NotFoundException('No file associated with this receipt');

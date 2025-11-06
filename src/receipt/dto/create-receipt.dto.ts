@@ -23,6 +23,10 @@ export class CreateReceiptDto {
   @IsString()
   filePath?: string;
 
+  @IsOptional()
+  @IsString()
+  // createdById is derived from `userId` so it's not accepted separately
+
   @IsString()
   userId: string;
 

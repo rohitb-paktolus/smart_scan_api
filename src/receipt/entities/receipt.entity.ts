@@ -8,6 +8,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { User } from '../../auth/entities/user.entity';
+import { ReceiptCategory } from '../enums/receipt-category.enum';
 
 @Entity('receipts')
 export class Receipt {
@@ -23,8 +24,12 @@ export class Receipt {
   @Column()
   date: Date;
 
-  @Column()
-  category: string;
+  @Column({
+    type: 'enum',
+    enum: ReceiptCategory,
+    default: ReceiptCategory.GENERAL
+  })
+  category: ReceiptCategory;
 
   @Column({ nullable: true })
   filePath: string;

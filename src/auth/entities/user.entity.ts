@@ -3,6 +3,7 @@ import {
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity('users')
@@ -28,6 +29,12 @@ export class User {
   @Column({ default: true })
   isActive: boolean;
 
+  @Column({ type: 'varchar', nullable: true }) // Explicitly define as nullable
+  refreshToken: string | null;
+
   @CreateDateColumn()
   createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

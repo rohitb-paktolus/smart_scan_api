@@ -6,6 +6,7 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { User } from './entities/user.entity';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { RefreshJwtStrategy } from './strategies/refreshToken.strategy';
 
 @Module({
   imports: [
@@ -15,14 +16,14 @@ import { JwtStrategy } from './strategies/jwt.strategy';
       useFactory: (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET') || 'your-secret-key',
         signOptions: {
-          expiresIn: '24h',
+          expiresIn: '15m', // Access token expires in 15 minutes
         },
       }),
       inject: [ConfigService],
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy, RefreshJwtStrategy],
   exports: [AuthService],
 })
 export class AuthModule {}

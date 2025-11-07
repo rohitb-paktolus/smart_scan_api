@@ -4,7 +4,9 @@ import {
   IsDate,
   IsOptional,
   IsBoolean,
+  IsEnum,
 } from 'class-validator';
+import { ReceiptCategory } from '../enums/receipt-category.enum';
 
 export class CreateReceiptDto {
   @IsString()
@@ -16,8 +18,8 @@ export class CreateReceiptDto {
   @IsDate()
   date: Date;
 
-  @IsString()
-  category: string;
+  @IsEnum(ReceiptCategory)
+  category: ReceiptCategory;
 
   @IsOptional()
   @IsString()

@@ -1,7 +1,7 @@
 import {
   IsString,
   IsNumber,
-  IsDate,
+  IsISO8601,
   IsOptional,
   IsBoolean,
   IsEnum,
@@ -15,8 +15,8 @@ export class CreateReceiptDto {
   @IsNumber()
   totalAmount: number;
 
-  @IsDate()
-  date: Date;
+  @IsISO8601() // This accepts ISO date strings like "2025-01-15T14:30:00.000Z"
+  date: string; // Change type to string
 
   @IsEnum(ReceiptCategory)
   category: ReceiptCategory;
@@ -28,7 +28,6 @@ export class CreateReceiptDto {
   @IsOptional()
   @IsString()
   // createdById is derived from `userId` so it's not accepted separately
-
   @IsString()
   userId: string;
 
